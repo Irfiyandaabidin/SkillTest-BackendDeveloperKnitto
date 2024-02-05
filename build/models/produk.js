@@ -55,6 +55,7 @@ const deleteProduk = (id) => __awaiter(void 0, void 0, void 0, function* () {
     return result;
 });
 exports.deleteProduk = deleteProduk;
+// Menerapkan transaksi pada MySQL
 const addTransaksi = (product_id, total) => {
     return new Promise((resolve, reject) => {
         pool.getConnection((err, connection) => {

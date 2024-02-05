@@ -5,6 +5,8 @@ interface IError {
   status: string,
   message: string;
 }
+
+// 09. Error handling
 export default (err: IError, req: Request, res: Response, next: NextFunction) => {
   err.statusCode = err.statusCode || 500;
   err.status = err.status || 'Error';

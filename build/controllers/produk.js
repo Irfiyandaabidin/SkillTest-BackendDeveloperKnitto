@@ -39,6 +39,7 @@ exports.addTransaksi = exports.deleteProduk = exports.updateProduk = exports.cre
 const ProdukModel = __importStar(require("../models/produk.js"));
 const resBase_js_1 = __importDefault(require("../utils/resBase.js"));
 const apiError_js_1 = __importDefault(require("../utils/apiError.js"));
+const index_js_1 = __importDefault(require("../validation/index.js"));
 const getAllProduk = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const [data] = yield ProdukModel.getAllProduk();
@@ -66,12 +67,10 @@ exports.getProduk = getProduk;
 const createNewProduk = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { body } = req;
-        const requiredFields = ['name', 'price', 'stok', 'description'];
-        const validateMessage = requiredFields
-            .filter(field => !body[field])
-            .map(field => `${field} must be filled `);
-        if (validateMessage.length > 0) {
-            return next(new apiError_js_1.default(validateMessage.toString(), 400));
+        const { name, description, stok, price, category_id } = body;
+        const validation = index_js_1.default.validate({ name, description, stok, price, category_id });
+        if (validation.error) {
+            return next(new apiError_js_1.default(validation.error.details[0].message, 400));
         }
         const data = yield ProdukModel.createNewProduk(body);
         res.status(201).json((0, resBase_js_1.default)('CREATE produk success', data, 201));

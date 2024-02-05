@@ -23,7 +23,7 @@ const getAllProduk = () => {
   return dbPool.execute(SQLQuery);
 }
 
-// Mengambil data dari dua tabel yang berbeda dengan melakukan join
+// 05. Query untuk mengambil data dari dua tabel yang berbeda dengan melakukan join
 const getProduk = (id:number) => { 
   const SQLQuery = `SELECT produk.*, category.name as category_name FROM produk INNER JOIN category ON produk.category_id = category.id WHERE produk.id = ${id}`;
   return dbPool.execute(SQLQuery);
@@ -52,7 +52,7 @@ const deleteProduk = async( id: number ) => {
   return result;
 }
 
-// Menerapkan transaksi pada MySQL
+// 06. Menerapkan transaksi pada MySQL
 const addTransaksi = (product_id: number, total: number) => {
   return new Promise<void>((resolve, reject) => {
     pool.getConnection((err, connection) => {

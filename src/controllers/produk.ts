@@ -3,7 +3,9 @@ import { OkPacket } from 'mysql2';
 import * as ProdukModel from '../models/produk.js';
 import resSuccess from '../utils/resBase.js';
 import ApiError from '../utils/apiError.js';
+import schema from '../validation/index.js';
 
+// 01. Mengambil data dari database
 const getAllProduk = async(req: Request, res: Response, next: NextFunction) => {
   try {
     const [data] = await ProdukModel.getAllProduk();
@@ -18,7 +20,6 @@ const getAllProduk = async(req: Request, res: Response, next: NextFunction) => {
   }
 }
 
-// Mengambil data dari dua tabel yang berbeda dengan melakukan join
 const getProduk = async(req: Request, res: Response, next: NextFunction) => {
   try {
     const {id} = req.params;
@@ -34,16 +35,20 @@ const getProduk = async(req: Request, res: Response, next: NextFunction) => {
   }
 }
 
+// 07. Create entitas dalam database MySQL
 const createNewProduk = async(req: Request, res: Response, next: NextFunction) => {
   try {
     const { body } = req;
-    const requiredFields = ['name', 'price', 'stok', 'description'];
-    const validateMessage = requiredFields
-      .filter(field => !body[field])
-      .map(field => `${field} must be filled `)
-
-    if(validateMessage.length > 0) {
-      return next(new ApiError(validateMessage.toString(), 400))
+    const {
+      name,
+      description,
+      stok,
+      price,
+      category_id
+    } = body
+    const validation = schema.validate({ name, description, stok, price, category_id });
+    if(validation.error) {
+      return next(new ApiError(validation.error.details[0].message, 400));
     }
     const data = await ProdukModel.createNewProduk(body);
     res.status(201).json(resSuccess(
@@ -57,10 +62,22 @@ const createNewProduk = async(req: Request, res: Response, next: NextFunction) =
   }
 }
 
+// 07. Update entitas dalam database MySQL
 const updateProduk = async(req: Request, res: Response, next: NextFunction) => {
   try {
     const { id } = req.params;
     const { body } = req;
+    const {
+      name,
+      description,
+      stok,
+      price,
+      category_id
+    } = body
+    const validation = schema.validate({ name, description, stok, price, category_id });
+    if(validation.error) {
+      return next(new ApiError(validation.error.details[0].message, 400));
+    }
     const data = await ProdukModel.updateProduk(body, parseInt(id));
     if(Object.keys(data).length === 0) {
       return next(new ApiError('Id not found.', 404))    
@@ -76,6 +93,7 @@ const updateProduk = async(req: Request, res: Response, next: NextFunction) => {
   }
 }
 
+// 07. Delete entitas dalam database MySQL
 const deleteProduk = async(req: Request, res: Response, next:NextFunction) => {
   try {
     const { id } = req.params;

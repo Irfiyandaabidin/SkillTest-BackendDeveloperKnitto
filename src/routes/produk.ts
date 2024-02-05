@@ -2,6 +2,7 @@ import express from 'express';
 import * as ProdukController from '../controllers/produk.js';
 const route = express.Router();
 
+// 08. API Endpoint untuk menangani operasi CRUD
 route.get('/', ProdukController.getAllProduk);
 route.get('/:id', ProdukController.getProduk);
 route.post('/', ProdukController.createNewProduk);

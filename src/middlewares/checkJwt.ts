@@ -5,7 +5,7 @@ import jwt from 'jsonwebtoken';
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
-// Middleware untuk check token JWT
+// 02. Middleware untuk check token JWT
 export = (req:Request, res:Response, next: NextFunction) => {
   const bearerToken = req.headers.authorization;
   if(!bearerToken) {
